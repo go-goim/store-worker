@@ -1,0 +1,17 @@
+name: goim.worker.store
+version: v0.0.0
+log:
+  level: DEBUG
+http:
+  scheme: http
+  port: 18031
+mq:
+  addr:
+    - 127.0.0.1:9876
+hBase:
+  addr: 127.0.0.1
+# services name
+gatewayService: service.goim.gateway
+userService: service.goim.user
+pushService: service.goim.push
+msgService: service.goim.msg
