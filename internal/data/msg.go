@@ -13,8 +13,8 @@ type Message struct {
 }
 
 type MessageUsers struct {
-	From string `json:"from"`
-	To   string `json:"to"`
+	From int64 `json:"from"`
+	To   int64 `json:"to"`
 }
 
 type MessageContent struct {
@@ -33,8 +33,8 @@ func (Message) TableName() string {
 func (m *Message) Values() map[string]map[string][]byte {
 	return map[string]map[string][]byte{
 		"users": {
-			"from": []byte(m.Users.From),
-			"to":   []byte(m.Users.To),
+			"from": []byte(strconv.FormatInt(m.Users.From, 10)),
+			"to":   []byte(strconv.FormatInt(m.Users.To, 10)),
 		},
 		"content": {
 			"type": []byte(strconv.Itoa(int(m.Content.Type))),

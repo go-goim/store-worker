@@ -6,7 +6,7 @@ import (
 
 func Test_rowKey(t *testing.T) {
 	type args struct {
-		sessionId int64
+		sessionId string
 		msgId     int64
 	}
 	tests := []struct {
@@ -17,10 +17,10 @@ func Test_rowKey(t *testing.T) {
 		{
 			name: "test_rowKey",
 			args: args{
-				sessionId: 69852090574311423,
+				sessionId: "0030000000000000000000100000000000000000002",
 				msgId:     69852090574311426,
 			},
-			want: "128|000069852090574311423|000069852090574311426",
+			want: "002|0030000000000000000000100000000000000000002|00069852090574311426",
 		},
 	}
 	for _, tt := range tests {
