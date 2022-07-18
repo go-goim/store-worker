@@ -88,9 +88,10 @@ func rowKey(sessionId string, msgId int64) string {
 		return fmt.Sprintf("%03d|%s|%020d", zone, sessionId, msgId)
 	}
 	// from always is valid
-	zone = from%128 + 1
+	zone = from.Int64()%128 + 1
 	// sessionId % 128 + 1 as partition, 1~128
 	// partition|sessionId|msgId as rowKey
 	// same msg from same session will be had same partition
+	// 3 bytes | 24 bytes | 20 bytes => 47 bytes
 	return fmt.Sprintf("%03d|%s|%020d", zone, sessionId, msgId)
 }

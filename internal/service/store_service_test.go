@@ -17,10 +17,10 @@ func Test_rowKey(t *testing.T) {
 		{
 			name: "test_rowKey",
 			args: args{
-				sessionId: "0030000000000000000000100000000000000000002",
+				sessionId: "000aG9PKEB8ch0aG9PKEB8ci",
 				msgId:     69852090574311426,
 			},
-			want: "002|0030000000000000000000100000000000000000002|00069852090574311426",
+			want: "003|000aG9PKEB8ch0aG9PKEB8ci|00069852090574311426",
 		},
 	}
 	for _, tt := range tests {
