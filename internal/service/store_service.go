@@ -63,8 +63,9 @@ func (s *StoreService) storeMsg(ctx context.Context, ext *primitive.MessageExt) 
 	dm := &data.Message{
 		RowKey: rowKey(msg.SessionId, msg.MsgId),
 		Users: &data.MessageUsers{
-			From: msg.From,
-			To:   msg.To,
+			From:      msg.From,
+			To:        msg.To,
+			SessionID: msg.SessionId,
 		},
 		Content: &data.MessageContent{
 			Type: int8(msg.GetContentType()),
