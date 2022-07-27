@@ -79,20 +79,20 @@ func (s *StoreService) storeMsg(ctx context.Context, ext *primitive.MessageExt) 
 	return s.storeDao.Put(ctx, dm)
 }
 
-func rowKey(sessionId string, msgId int64) string {
+func rowKey(sessionID string, msgID int64) string {
 	var zone int64
-	// parse sessionId
-	_, from, _, err := util.ParseSession(sessionId)
+	// parse sessionID
+	_, from, _, err := util.ParseSession(sessionID)
 	if err != nil {
 		// use default value
-		log.Error("parse sessionId error", "err", err, "sessionId", sessionId)
-		return fmt.Sprintf("%03d|%s|%020d", zone, sessionId, msgId)
+		log.Error("parse sessionID error", "err", err, "sessionID", sessionID)
+		return fmt.Sprintf("%03d|%s|%020d", zone, sessionID, msgID)
 	}
 	// from always is valid
 	zone = from.Int64()%128 + 1
-	// sessionId % 128 + 1 as partition, 1~128
-	// partition|sessionId|msgId as rowKey
+	// sessionID % 128 + 1 as partition, 1~128
+	// partition|sessionID|msgID as rowKey
 	// same msg from same session will be had same partition
 	// 3 bytes | 24 bytes | 20 bytes => 47 bytes
-	return fmt.Sprintf("%03d|%s|%020d", zone, sessionId, msgId)
+	return fmt.Sprintf("%03d|%s|%020d", zone, sessionID, msgID)
 }
