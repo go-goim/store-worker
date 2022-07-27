@@ -11,6 +11,7 @@ import (
 
 	messagev1 "github.com/go-goim/api/message/v1"
 	"github.com/go-goim/core/pkg/log"
+	"github.com/go-goim/core/pkg/util"
 	"github.com/go-goim/store-worker/internal/dao"
 	"github.com/go-goim/store-worker/internal/data"
 )
@@ -62,8 +63,9 @@ func (s *StoreService) storeMsg(ctx context.Context, ext *primitive.MessageExt) 
 	dm := &data.Message{
 		RowKey: rowKey(msg.SessionId, msg.MsgId),
 		Users: &data.MessageUsers{
-			From: msg.GetFrom(),
-			To:   msg.GetTo(),
+			From:      msg.From,
+			To:        msg.To,
+			SessionID: msg.SessionId,
 		},
 		Content: &data.MessageContent{
 			Type: int8(msg.GetContentType()),
@@ -77,9 +79,20 @@ func (s *StoreService) storeMsg(ctx context.Context, ext *primitive.MessageExt) 
 	return s.storeDao.Put(ctx, dm)
 }
 
-func rowKey(sessionId, msgId int64) string {
-	// sessionId % 128 + 1 as partition, 1~128
-	// partition|sessionId|msgId as rowKey
+func rowKey(sessionID string, msgID int64) string {
+	var zone int64
+	// parse sessionID
+	_, from, _, err := util.ParseSession(sessionID)
+	if err != nil {
+		// use default value
+		log.Error("parse sessionID error", "err", err, "sessionID", sessionID)
+		return fmt.Sprintf("%03d|%s|%020d", zone, sessionID, msgID)
+	}
+	// from always is valid
+	zone = from.Int64()%128 + 1
+	// sessionID % 128 + 1 as partition, 1~128
+	// partition|sessionID|msgID as rowKey
 	// same msg from same session will be had same partition
-	return fmt.Sprintf("%03d|%021d|%021d", sessionId%128+1, sessionId, msgId)
+	// 3 bytes | 24 bytes | 20 bytes => 47 bytes
+	return fmt.Sprintf("%03d|%s|%020d", zone, sessionID, msgID)
 }
