@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
+	messagev1 "github.com/go-goim/api/message/v1"
 	"github.com/go-goim/core/pkg/db"
-	"github.com/go-goim/store-worker/internal/data"
 )
 
 type MessageDao struct {
@@ -24,12 +24,16 @@ func GetMessageDao() *MessageDao {
 	return msgDao
 }
 
-func (d *MessageDao) Put(ctx context.Context, msg *data.Message) error {
+func (d *MessageDao) Put(ctx context.Context, msg *messagev1.StorageMessage) error {
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
-	result := db.GetHBaseFromCtx(ctx).Table(msg.TableName()).Key(msg.RowKey).Values(msg.Values()).Put()
+	result := db.GetHBaseFromCtx(ctx).
+		Table(msg.TableName()).
+		Key(msg.HbaseRowKey()).
+		Values(msg.HbaseValues()).
+		Put()
 	if result.Err() != nil {
 		return result.Err()
 	}
