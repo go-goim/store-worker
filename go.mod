@@ -5,8 +5,9 @@ go 1.18
 require (
 	github.com/apache/rocketmq-client-go/v2 v2.1.1
 	github.com/gin-gonic/gin v1.8.1
-	github.com/go-goim/api v0.0.7
-	github.com/go-goim/core v0.0.7
+	github.com/go-goim/api v0.0.8
+	github.com/go-goim/core v0.0.8
+	google.golang.org/protobuf v1.28.0
 )
 
 require (
@@ -93,7 +94,6 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd // indirect
 	google.golang.org/grpc v1.48.0 // indirect
-	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
