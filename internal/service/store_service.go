@@ -5,15 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/apache/rocketmq-client-go/v2/consumer"
 	"github.com/apache/rocketmq-client-go/v2/primitive"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	messagev1 "github.com/go-goim/api/message/v1"
 	"github.com/go-goim/core/pkg/log"
 	"github.com/go-goim/core/pkg/util"
 	"github.com/go-goim/store-worker/internal/dao"
-	"github.com/go-goim/store-worker/internal/data"
 )
 
 type StoreService struct {
@@ -28,6 +29,7 @@ var (
 func GetStoreService() *StoreService {
 	once.Do(func() {
 		storeService = new(StoreService)
+		storeService.storeDao = dao.GetMessageDao()
 	})
 
 	return storeService
@@ -60,23 +62,23 @@ func (s *StoreService) storeMsg(ctx context.Context, ext *primitive.MessageExt) 
 		return err
 	}
 
-	dm := &data.Message{
+	sm := &messagev1.StorageMessage{
 		RowKey: rowKey(msg.SessionId, msg.MsgId),
-		Users: &data.MessageUsers{
-			From:      msg.From,
-			To:        msg.To,
+		Users: &messagev1.StorageMessage_Users{
+			FromID:    msg.From,
+			ToID:      msg.To,
 			SessionID: msg.SessionId,
 		},
-		Content: &data.MessageContent{
-			Type: int8(msg.GetContentType()),
-			Text: msg.GetContent(),
+		Content: &messagev1.StorageMessage_Content{
+			ContentType: msg.GetContentType(),
+			Content:     msg.GetContent(),
 		},
-		Extra: &data.MessageExtra{
-			Timestamp: msg.GetCreateTime(),
+		Extra: &messagev1.StorageMessage_Extra{
+			CreateTime: timestamppb.New(time.Unix(msg.CreateTime, 0)),
 		},
 	}
 
-	return s.storeDao.Put(ctx, dm)
+	return s.storeDao.Put(ctx, sm)
 }
 
 func rowKey(sessionID string, msgID int64) string {
